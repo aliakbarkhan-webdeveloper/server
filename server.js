@@ -15,7 +15,7 @@ app.post("/create", async (req, res) => {
   //   res.send("error");
   //   return
   // }
-  let hashedPassword = bcrypt.genSalt(10, (err, salt) => {
+  bcrypt.genSalt(10, (err, salt) => {
     bcrypt.hash(password, salt, async (err, hash) => {
       await userModel.create({
         username,
