@@ -4,30 +4,39 @@ const app = express();
 const postModel = require("./models/post.model.js");
 const userModel = require("./models/user.model.js");
 const cookieParser = require("cookie-parser");
+const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
+
+// app.use(cookieParser())
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 // app.use(cookieParser);
 app.post("/create", async (req, res) => {
   const { username, name, age, email, password } = req.body;
-  // let alreadyRegister = await userModel.findOne({ email });
-  // if (alreadyRegister) {
-  //   res.send("error");
-  //   return
-  // }
+  let alreadyRegister = await userModel.findOne({ email });
+  if (alreadyRegister) {
+    res.send("error");
+    return;
+  }
   bcrypt.genSalt(10, (err, salt) => {
     bcrypt.hash(password, salt, async (err, hash) => {
-      await userModel.create({
+      let user = await userModel.create({
         username,
         name,
         age,
         email,
         password: hash,
       });
-  
+      let token =jwt.sign({ email:email, userid: user._id }, "secret");
+        await userModel.create({
+    username,
+    name,
+    age,
+    email,
+    password: hashedPassword,
+  });
     });
   });
-
 
   res.send("created");
 });
