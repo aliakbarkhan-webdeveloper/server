@@ -9,15 +9,15 @@ const bcrypt = require("bcryptjs");
 
 // app.use(cookieParser())
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+// app.use(express.urlencoded({ extended: true }));
 // app.use(cookieParser);
 app.post("/create", async (req, res) => {
   const { username, name, age, email, password } = req.body;
   let alreadyRegister = await userModel.findOne({ email });
-  if (alreadyRegister) {
-    res.send("error");
-    return;
-  }
+  // if (alreadyRegister) {
+  //   res.send("error");
+  //   return;
+  // }
   bcrypt.genSalt(10, (err, salt) => {
     bcrypt.hash(password, salt, async (err, hash) => {
       let user = await userModel.create({
@@ -28,16 +28,9 @@ app.post("/create", async (req, res) => {
         password: hash,
       });
       let token =jwt.sign({ email:email, userid: user._id }, "secret");
-        await userModel.create({
-    username,
-    name,
-    age,
-    email,
-    password: hashedPassword,
+     
   });
-    });
-  });
-
+  })
   res.send("created");
 });
 
@@ -45,6 +38,6 @@ let connect = async () => {
   await mongoose.connect("mongodb://localhost:27017/miniproject");
 };
 connect();
-app.listen(4000, () => {
+app.listen(3500, () => {
   console.log("app is running on port 6000");
 });
